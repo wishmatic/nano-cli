@@ -35,7 +35,7 @@ is worth a call before a generation that bills by the second.
 ## Local Development
 
 ```sh
-API_KEY=change-me NANOGPT_API_KEY=change-me PUBLIC_HOST=http://localhost:8080 go run ./cmd/server
+API_KEY=change-me NANOGPT_API_KEY=change-me PUBLIC_HOST=http://localhost:8080 go run ./cmd/nano serve
 ```
 
 The MCP endpoint is `/mcp`, and `/healthz` answers `ok` without a token. Generated images and
