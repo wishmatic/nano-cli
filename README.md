@@ -1,7 +1,7 @@
 # nano-mcp
 
-An MCP server that exposes [NanoGPT](https://nano-gpt.com)'s data endpoints as tools, so a
-client can search the web, read pages, and generate images and videos on NanoGPT's billing.
+An MCP server and CLI for [NanoGPT](https://nano-gpt.com)'s data endpoints, so a client or a
+terminal can search the web, read pages, and generate images and videos on NanoGPT's billing.
 
 - `web_search` (`POST /api/web`): searches the web through NanoGPT's providers and
   reports the charge.
@@ -32,10 +32,40 @@ nothing and comes back as a failed entry. `list_models` is how to find an id for
 which is worth doing because the names, availability, and settings all change, and `check_balance`
 is worth a call before a generation that bills by the second.
 
+## CLI
+
+```sh
+go install github.com/wishmatic/nano-mcp/cmd/nano@latest
+```
+
+`nano login` reads the API key from stdin, hiding it when the terminal is interactive, and stores
+it in the OS keyring. When no keyring is available it falls back to a `0600` file under the user
+config directory. `NANOGPT_API_KEY` takes precedence over the stored key, and
+`NANO_CREDENTIAL_BACKEND=keyring|file|auto` forces a backend. `nano logout` removes it.
+
+```sh
+nano web search "go generics" --provider exa
+nano web scrape https://example.com
+nano web scrape --firecrawl https://example.com --format markdown
+nano web map https://example.com
+nano web crawl https://example.com --limit 10
+nano web youtube https://www.youtube.com/watch?v=...
+nano models list image --query nano
+nano models balance
+nano gen image "a red fox in snow" --out ./images
+nano gen video "waves at sunset" --model veo2-video --out ./videos
+```
+
+The CLI saves generated media to local files. `nano serve` runs the MCP server, and `nano help`
+or `nano help <command>` lists every flag. The keyring is preferred for interactive use;
+`NANOGPT_API_KEY` is convenient for containers and CI, but environment variables can be exposed
+to other processes more easily than the keyring.
+
 ## Local Development
 
 ```sh
-API_KEY=change-me NANOGPT_API_KEY=change-me PUBLIC_HOST=http://localhost:8080 go run ./cmd/nano serve
+API_KEY=change-me NANOGPT_API_KEY=change-me \
+  PUBLIC_HOST=http://localhost:8080 go run ./cmd/nano serve
 ```
 
 The MCP endpoint is `/mcp`, and `/healthz` answers `ok` without a token. Generated images and
@@ -54,12 +84,12 @@ readable by anyone who has its URL. See [.env.example](.env.example) for the res
 
 ### Input addresses
 
-`generate_image` and `generate_video` take an image as an address: an http(s) URL, a data URI, raw
-base64, or a URL this deployment maps to a local file. The resolver reads it and sends the bytes to
-NanoGPT, so the address itself only has to be reachable by this server. `IMAGE_URL_MAP` is how an
-image on disk, or on a sibling `elfu-mcp` or `neo-mcp` whose host NanoGPT cannot reach, becomes
-readable: comma-separated `public=private` pairs, where the private side is a directory or a
-private base URL.
+The MCP `generate_image` and `generate_video` tools and the CLI `gen` commands take an image as an
+address: an http(s) URL, a data URI, raw base64, or a URL this deployment maps to a local file.
+The resolver reads it and sends the bytes to NanoGPT, so the address itself only has to be
+reachable by this machine. `IMAGE_URL_MAP` is how an image on disk, or on a sibling `elfu-mcp` or
+`neo-mcp` whose host NanoGPT cannot reach, becomes readable: comma-separated `public=private`
+pairs, where the private side is a directory or a private base URL.
 
 ```sh
 # elfu-mcp's images, read from its files directory rather than over the network
