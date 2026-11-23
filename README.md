@@ -35,37 +35,37 @@ is worth a call before a generation that bills by the second.
 ## CLI
 
 ```sh
-go install github.com/wishmatic/nano-mcp/cmd/nano@latest
+go install github.com/wishmatic/nano-mcp/cmd/nano-cli@latest
 ```
 
-`nano login` reads the API key from stdin, hiding it when the terminal is interactive, and stores
-it in the OS keyring. When no keyring is available it falls back to a `0600` file under the user
-config directory. `NANOGPT_API_KEY` takes precedence over the stored key, and
-`NANO_CREDENTIAL_BACKEND=keyring|file|auto` forces a backend. `nano logout` removes it.
+`nano-cli login` reads the API key from stdin, hiding it when the terminal is interactive, and
+stores it in the OS keyring. When no keyring is available it falls back to a `0600` file under the
+user config directory. `NANOGPT_API_KEY` takes precedence over the stored key, and
+`NANO_CREDENTIAL_BACKEND=keyring|file|auto` forces a backend. `nano-cli logout` removes it.
 
 ```sh
-nano web search "go generics" --provider exa
-nano web scrape https://example.com
-nano web scrape --firecrawl https://example.com --format markdown
-nano web map https://example.com
-nano web crawl https://example.com --limit 10
-nano web youtube https://www.youtube.com/watch?v=...
-nano models list image --query nano
-nano models balance
-nano gen image "a red fox in snow" --out ./images
-nano gen video "waves at sunset" --model veo2-video --out ./videos
+nano-cli web search "go generics" --provider exa
+nano-cli web scrape https://example.com
+nano-cli web scrape --firecrawl https://example.com --format markdown
+nano-cli web map https://example.com
+nano-cli web crawl https://example.com --limit 10
+nano-cli web youtube https://www.youtube.com/watch?v=...
+nano-cli models list image --query nano
+nano-cli models balance
+nano-cli gen image "a red fox in snow" --out ./images
+nano-cli gen video "waves at sunset" --model veo2-video --out ./videos
 ```
 
-The CLI saves generated media to local files. `nano serve` runs the MCP server, and `nano help`
-or `nano help <command>` lists every flag. The keyring is preferred for interactive use;
-`NANOGPT_API_KEY` is convenient for containers and CI, but environment variables can be exposed
-to other processes more easily than the keyring.
+The CLI saves generated media to local files. `nano-cli serve` runs the MCP server, and
+`nano-cli help` or `nano-cli help <command>` lists every flag. The keyring is preferred for
+interactive use; `NANOGPT_API_KEY` is convenient for containers and CI, but environment variables
+can be exposed to other processes more easily than the keyring.
 
 ## Local Development
 
 ```sh
 API_KEY=change-me NANOGPT_API_KEY=change-me \
-  PUBLIC_HOST=http://localhost:8080 go run ./cmd/nano serve
+  PUBLIC_HOST=http://localhost:8080 go run ./cmd/nano-cli serve
 ```
 
 The MCP endpoint is `/mcp`, and `/healthz` answers `ok` without a token. Generated images and
