@@ -34,6 +34,7 @@ func newRoot(deps cli.Deps) *cobra.Command {
 		newLoginCommand(deps),
 		newLogoutCommand(deps),
 		newServeCommand(),
+		newWebCommand(deps),
 	)
 
 	return root
