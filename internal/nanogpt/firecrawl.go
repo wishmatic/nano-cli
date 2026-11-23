@@ -16,7 +16,7 @@ const (
 	WaitForFinishDefault    = 120
 	MaxReturnedPagesDefault = 25
 
-	// MaxWaitForFinishSecs caps how long a crawl may ask nano-gpt to wait, so every call
+	// MaxWaitForFinishSecs caps how long a crawl may ask NanoGPT to wait, so every call
 	// fits inside MaxCallBudget and therefore inside internal/server's write timeout.
 	MaxWaitForFinishSecs = 300
 
@@ -33,7 +33,7 @@ type FirecrawlRequest struct {
 	Formats []string `json:"formats,omitempty"`
 	Proxy   string   `json:"proxy,omitempty"`
 
-	// Pointers because nano-gpt documents no defaults for these, so unset has to stay
+	// Pointers because NanoGPT documents no defaults for these, so unset has to stay
 	// distinguishable from an explicit false.
 	OnlyMainContent   *bool `json:"onlyMainContent,omitempty"`
 	OnlyCleanContent  *bool `json:"onlyCleanContent,omitempty"`
@@ -48,7 +48,7 @@ type FirecrawlRequest struct {
 	MaxReturnedPages  int `json:"maxReturnedPages,omitempty"`
 }
 
-// Firecrawl returns the response body decoded but unmodelled: nano-gpt documents no shape
+// Firecrawl returns the response body decoded but unmodelled: NanoGPT documents no shape
 // for it, and the three operations do not share one.
 func (c *Client) Firecrawl(ctx context.Context, req FirecrawlRequest) (any, error) {
 	budget, err := req.prepare()

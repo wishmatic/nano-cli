@@ -9,7 +9,7 @@ import (
 
 const balancePath = "/api/check-balance"
 
-// Balance is the credit left on the account, in both currencies nano-gpt reports it in.
+// Balance is the credit left on the account, in both currencies NanoGPT reports it in.
 type Balance struct {
 	USD            float64
 	Nano           float64
@@ -49,7 +49,7 @@ func (c *Client) CheckBalance(ctx context.Context) (*Balance, error) {
 func parseAmount(field, value string) (float64, error) {
 	trimmed := strings.TrimSpace(value)
 
-	// A balance nano-gpt leaves out is one it does not report, which is no credit in it.
+	// A balance NanoGPT leaves out is one it does not report, which is no credit in it.
 	if trimmed == "" {
 		return 0, nil
 	}

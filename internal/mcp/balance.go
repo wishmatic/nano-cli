@@ -9,13 +9,13 @@ import (
 type checkBalanceOutput struct {
 	USD            float64 `json:"usdBalance" jsonschema:"what is left to spend, in USD"`
 	Nano           float64 `json:"nanoBalance" jsonschema:"the same credit, as Nano"`
-	DepositAddress string  `json:"nanoDepositAddress,omitempty" jsonschema:"where to send Nano to top the account up, when nano-gpt reports one"`
+	DepositAddress string  `json:"nanoDepositAddress,omitempty" jsonschema:"where to send Nano to top the account up, when NanoGPT reports one"`
 }
 
 func registerCheckBalance(srv *mcp.Server, h *handlers) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "check_balance",
-		Description: "Read the nano-gpt account balance, which is what funds every other tool call. Free, " +
+		Description: "Read the NanoGPT account balance, which is what funds every other tool call. Free, " +
 			"and worth a call before an expensive generation.",
 	}, h.checkBalance)
 }

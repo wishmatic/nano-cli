@@ -13,7 +13,7 @@ const (
 	videoPath       = "/api/generate-video"
 	videoStatusPath = "/api/video/status"
 
-	// VideoPollInterval is the cadence nano-gpt's own polling example uses.
+	// VideoPollInterval is the cadence NanoGPT's own polling example uses.
 	VideoPollInterval = 5 * time.Second
 
 	// VideoWaitBudget is how long one call waits for a video, which is that example's whole
@@ -26,11 +26,11 @@ const (
 	StateFailed     = "failed"
 	StateCancelled  = "cancelled"
 
-	// ModeImageToVideo is what an animated image asks for, and nano-gpt's name for it.
+	// ModeImageToVideo is what an animated image asks for, and NanoGPT's name for it.
 	ModeImageToVideo = "image-to-video"
 )
 
-// VideoRequest carries the fields this server exposes. nano-gpt takes some sixty, most of them
+// VideoRequest carries the fields this server exposes. NanoGPT takes some sixty, most of them
 // legacy duplicates or model-specific; these are the ones the documented models share.
 type VideoRequest struct {
 	Model  string `json:"model"`
@@ -67,7 +67,7 @@ type Video struct {
 	CostUSD float64
 }
 
-// VideoStatus covers both shapes nano-gpt documents for this endpoint: the flat object in its
+// VideoStatus covers both shapes NanoGPT documents for this endpoint: the flat object in its
 // response schema, and the data-wrapped object with uppercase states that its examples show.
 type VideoStatus struct {
 	RequestID string `json:"requestId"`

@@ -29,7 +29,7 @@ func TestServerWithoutAClientListsNoTools(t *testing.T) {
 	session := connectedSession(t, noopDeps())
 
 	if names := toolNames(t, session); len(names) != 0 {
-		t.Errorf("tools = %v, want none until a nano-gpt client is configured", names)
+		t.Errorf("tools = %v, want none until a NanoGPT client is configured", names)
 	}
 }
 

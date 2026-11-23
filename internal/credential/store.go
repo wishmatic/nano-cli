@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	ErrNotFound = errors.New("no stored nano-gpt API key")
-	ErrEmptyKey = errors.New("nano-gpt API key is empty")
+	ErrNotFound = errors.New("no stored NanoGPT API key")
+	ErrEmptyKey = errors.New("NanoGPT API key is empty")
 )
 
 type Store interface {

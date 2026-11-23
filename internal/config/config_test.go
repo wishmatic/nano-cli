@@ -105,7 +105,7 @@ func TestLoadReadsTheEnvironment(t *testing.T) {
 	}
 
 	if cfg.NanoGPTAPIKey != "nano-secret" {
-		t.Errorf("Load() = %+v, want the configured nano-gpt key", cfg)
+		t.Errorf("Load() = %+v, want the configured NanoGPT key", cfg)
 	}
 
 	if cfg.PublicHost != "https://nano.example.com" || cfg.FilesDir != "/var/lib/nano-mcp" {

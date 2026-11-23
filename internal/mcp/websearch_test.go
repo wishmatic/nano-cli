@@ -52,7 +52,7 @@ func TestWebSearchReturnsTheResolvedRequestAndResults(t *testing.T) {
 	structured(t, result, &out)
 
 	if out.Provider != "linkup" || out.Operation != "search" {
-		t.Errorf("output = %+v, want the provider nano-gpt resolved", out)
+		t.Errorf("output = %+v, want the provider NanoGPT resolved", out)
 	}
 
 	if out.Depth != "standard" || out.OutputType != "searchResults" || out.Query != "go" {

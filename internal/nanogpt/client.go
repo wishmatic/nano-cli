@@ -18,7 +18,7 @@ const (
 	DefaultBaseURL = "https://nano-gpt.com"
 
 	// FastTimeout bounds the endpoints that answer in one round trip. A call that asks
-	// nano-gpt to wait for a crawl passes its own budget instead.
+	// NanoGPT to wait for a crawl passes its own budget instead.
 	FastTimeout = 90 * time.Second
 
 	errorBodyLimit = 512

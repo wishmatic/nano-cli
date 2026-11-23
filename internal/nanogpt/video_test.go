@@ -260,7 +260,7 @@ func completedStatus(videoURL string) string {
 }
 
 // videoTestClient shortens the poll loop so a test drives a whole generation without waiting
-// out nano-gpt's own cadence.
+// out NanoGPT's own cadence.
 func videoTestClient(t *testing.T, baseURL string) *Client {
 	t.Helper()
 

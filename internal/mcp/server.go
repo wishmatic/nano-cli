@@ -33,7 +33,7 @@ func New(deps Deps) (*mcp.Server, error) {
 	return srv, nil
 }
 
-// A server built without a nano-gpt client lists no tools, which keeps the
+// A server built without a NanoGPT client lists no tools, which keeps the
 // empty surface reachable in tests and in any future keyless deployment.
 func registerTools(srv *mcp.Server, h *handlers) {
 	if h.nanogpt == nil {

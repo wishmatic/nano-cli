@@ -7,10 +7,10 @@ import (
 	"github.com/wishmatic/nano-mcp/internal/nanogpt"
 )
 
-// firecrawlOutput passes the upstream payload through unmodelled: nano-gpt documents no
+// firecrawlOutput passes the upstream payload through unmodelled: NanoGPT documents no
 // response shape for this endpoint, and the three operations do not share one.
 type firecrawlOutput struct {
-	Result any `json:"result" jsonschema:"nano-gpt's Firecrawl response, passed through unchanged"`
+	Result any `json:"result" jsonschema:"NanoGPT's Firecrawl response, passed through unchanged"`
 }
 
 type firecrawlScrapeInput struct {
@@ -18,7 +18,7 @@ type firecrawlScrapeInput struct {
 	Formats          []string `json:"formats,omitempty" jsonschema:"output formats to render, such as markdown or html; Firecrawl also serves rawHtml, links, and screenshots"`
 	Proxy            string   `json:"proxy,omitempty" jsonschema:"basic uses Firecrawl's standard proxy; stealth costs more and gets past harder anti-bot defences"`
 	OnlyMainContent  *bool    `json:"onlyMainContent,omitempty" jsonschema:"drop navigation, footers, and other boilerplate from the page"`
-	OnlyCleanContent *bool    `json:"onlyCleanContent,omitempty" jsonschema:"run nano-gpt's extra cleanup pass over the extracted text"`
+	OnlyCleanContent *bool    `json:"onlyCleanContent,omitempty" jsonschema:"run NanoGPT's extra cleanup pass over the extracted text"`
 }
 
 type firecrawlMapInput struct {
@@ -32,13 +32,13 @@ type firecrawlCrawlInput struct {
 	Formats           []string `json:"formats,omitempty" jsonschema:"output formats to render, such as markdown or html; Firecrawl also serves rawHtml, links, and screenshots"`
 	Proxy             string   `json:"proxy,omitempty" jsonschema:"basic uses Firecrawl's standard proxy; stealth costs more and gets past harder anti-bot defences"`
 	OnlyMainContent   *bool    `json:"onlyMainContent,omitempty" jsonschema:"drop navigation, footers, and other boilerplate from each page"`
-	OnlyCleanContent  *bool    `json:"onlyCleanContent,omitempty" jsonschema:"run nano-gpt's extra cleanup pass over the extracted text"`
+	OnlyCleanContent  *bool    `json:"onlyCleanContent,omitempty" jsonschema:"run NanoGPT's extra cleanup pass over the extracted text"`
 	Sitemap           string   `json:"sitemap,omitempty" jsonschema:"include reads the site's sitemap alongside crawled links, skip ignores it, only uses it alone"`
 	Limit             int      `json:"limit,omitempty" jsonschema:"maximum pages to crawl"`
 	CrawlEntireDomain *bool    `json:"crawlEntireDomain,omitempty" jsonschema:"follow links across the whole domain, not just under the starting path"`
 	AllowSubdomains   *bool    `json:"allowSubdomains,omitempty" jsonschema:"also crawl subdomains of the starting URL"`
 	MaxDiscoveryDepth int      `json:"maxDiscoveryDepth,omitempty" jsonschema:"how many link hops from the starting URL to follow"`
-	WaitForFinishSecs int      `json:"waitForFinishSecs,omitempty" jsonschema:"how long nano-gpt waits for the crawl before answering: 120 by default, 300 at most"`
+	WaitForFinishSecs int      `json:"waitForFinishSecs,omitempty" jsonschema:"how long NanoGPT waits for the crawl before answering: 120 by default, 300 at most"`
 	MaxReturnedPages  int      `json:"maxReturnedPages,omitempty" jsonschema:"how many crawled pages to return once the crawl settles: 25 by default"`
 }
 
@@ -46,7 +46,7 @@ func registerFirecrawlScrape(srv *mcp.Server, h *handlers) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "firecrawl_scrape",
 		Description: "Fetch one page through Firecrawl, with a proxy tier and content filtering that web_scrape " +
-			"does not offer. Billed as Firecrawl credits through nano-gpt, rather than per URL.",
+			"does not offer. Billed as Firecrawl credits through NanoGPT, rather than per URL.",
 	}, h.firecrawlScrape)
 }
 
@@ -54,16 +54,16 @@ func registerFirecrawlMap(srv *mcp.Server, h *handlers) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "firecrawl_map",
 		Description: "List the URLs Firecrawl can discover on a site, without fetching their content. " +
-			"Billed as Firecrawl credits through nano-gpt.",
+			"Billed as Firecrawl credits through NanoGPT.",
 	}, h.firecrawlMap)
 }
 
 func registerFirecrawlCrawl(srv *mcp.Server, h *handlers) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "firecrawl_crawl",
-		Description: "Crawl a site from a starting URL and return the pages Firecrawl scraped. nano-gpt waits for " +
+		Description: "Crawl a site from a starting URL and return the pages Firecrawl scraped. NanoGPT waits for " +
 			"the crawl for up to waitForFinishSecs and returns up to maxReturnedPages of it. Each page is billed " +
-			"as Firecrawl credits through nano-gpt.",
+			"as Firecrawl credits through NanoGPT.",
 	}, h.firecrawlCrawl)
 }
 

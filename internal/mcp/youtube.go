@@ -19,25 +19,25 @@ type youtubeTranscribeOutput struct {
 type transcriptEntry struct {
 	URL        string `json:"url" jsonschema:"video that was transcribed"`
 	Success    bool   `json:"success" jsonschema:"whether the transcript was retrieved"`
-	Title      string `json:"title,omitempty" jsonschema:"video title when nano-gpt reported one"`
+	Title      string `json:"title,omitempty" jsonschema:"video title when NanoGPT reported one"`
 	Transcript string `json:"transcript,omitempty" jsonschema:"the transcript, one line per caption cue"`
 	Error      string `json:"error,omitempty" jsonschema:"why the transcript is missing, when it is"`
 }
 
 type transcriptSummary struct {
 	Requested  int     `json:"requested" jsonschema:"URLs asked for"`
-	Processed  int     `json:"processed" jsonschema:"URLs nano-gpt attempted"`
+	Processed  int     `json:"processed" jsonschema:"URLs NanoGPT attempted"`
 	Successful int     `json:"successful" jsonschema:"transcripts retrieved"`
 	Failed     int     `json:"failed" jsonschema:"transcripts that could not be retrieved"`
-	TotalCost  float64 `json:"totalCost" jsonschema:"what nano-gpt charged in USD; failed URLs are free"`
+	TotalCost  float64 `json:"totalCost" jsonschema:"what NanoGPT charged in USD; failed URLs are free"`
 }
 
 func registerYouTubeTranscribe(srv *mcp.Server, h *handlers) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "youtube_transcribe",
-		Description: "Fetch the transcript of up to 10 YouTube videos through nano-gpt, at about a cent per video. " +
+		Description: "Fetch the transcript of up to 10 YouTube videos through NanoGPT, at about a cent per video. " +
 			"Only successful transcripts are charged, and a video without captions comes back as a failed entry " +
-			"rather than an error. nano-gpt allows 10 of these requests a minute.",
+			"rather than an error. NanoGPT allows 10 of these requests a minute.",
 	}, h.youtubeTranscribe)
 }
 

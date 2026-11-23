@@ -8,7 +8,7 @@ import (
 
 const (
 	// ModelKindImage and ModelKindVideo name the two lists this server reads, and the word each
-	// one contributes to nano-gpt's own path.
+	// one contributes to NanoGPT's own path.
 	ModelKindImage = "image"
 	ModelKindVideo = "video"
 )
@@ -17,7 +17,7 @@ const (
 var ModelKinds = []string{ModelKindImage, ModelKindVideo}
 
 // Model is one entry of either list. Capabilities, supported parameters, and pricing stay as
-// they arrived, because their shape varies by model and nano-gpt adds fields without notice.
+// they arrived, because their shape varies by model and NanoGPT adds fields without notice.
 type Model struct {
 	ID                  string         `json:"id"`
 	Name                string         `json:"name"`
@@ -33,7 +33,7 @@ type modelsResponse struct {
 	Data []Model `json:"data"`
 }
 
-// Models lists what nano-gpt serves for one kind of media. Which models exist, and what each one
+// Models lists what NanoGPT serves for one kind of media. Which models exist, and what each one
 // accepts, changes without notice, which is why it is worth asking rather than hardcoding.
 func (c *Client) Models(ctx context.Context, kind string) ([]Model, error) {
 	if !slices.Contains(ModelKinds, kind) {
@@ -42,7 +42,7 @@ func (c *Client) Models(ctx context.Context, kind string) ([]Model, error) {
 
 	var out modelsResponse
 
-	// detailed=true is nano-gpt's own default, stated because it is what carries capabilities,
+	// detailed=true is NanoGPT's own default, stated because it is what carries capabilities,
 	// supported parameters, and pricing.
 	path := "/api/v1/" + kind + "-models?detailed=true"
 

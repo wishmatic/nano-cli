@@ -18,11 +18,11 @@ const (
 
 type generateImageInput struct {
 	Prompt string `json:"prompt" jsonschema:"what the image should show"`
-	Model  string `json:"model,omitempty" jsonschema:"image model id, such as nano-banana or hidream; the names change, so a rejection means nano-gpt's model list is worth checking. Unset uses nano-gpt's own default"`
-	N      *int   `json:"n,omitempty" jsonschema:"how many images to generate, each of them billed; unset uses nano-gpt's own default of 1"`
+	Model  string `json:"model,omitempty" jsonschema:"image model id, such as nano-banana or hidream; the names change, so a rejection means NanoGPT's model list is worth checking. Unset uses NanoGPT's own default"`
+	N      *int   `json:"n,omitempty" jsonschema:"how many images to generate, each of them billed; unset uses NanoGPT's own default of 1"`
 	Size   string `json:"size,omitempty" jsonschema:"requested output size or a model-specific resolution, such as 1024x1024, 1376x768, or auto; what a model accepts varies"`
 
-	Image  string   `json:"image,omitempty" jsonschema:"an image to transform instead of generating from scratch, given as an http(s) URL, a data URI, raw base64, or a URL this server maps with IMAGE_URL_MAP; the bytes travel with the request, so nano-gpt needs to reach nothing"`
+	Image  string   `json:"image,omitempty" jsonschema:"an image to transform instead of generating from scratch, given as an http(s) URL, a data URI, raw base64, or a URL this server maps with IMAGE_URL_MAP; the bytes travel with the request, so NanoGPT needs to reach nothing"`
 	Images []string `json:"images,omitempty" jsonschema:"input images for the models that take more than one, each resolved the way image is"`
 	Mask   string   `json:"mask,omitempty" jsonschema:"an inpainting mask, resolved the way image is; white marks the regions to generate"`
 
@@ -33,19 +33,19 @@ type generateImageInput struct {
 }
 
 type generateImageOutput struct {
-	Model   string   `json:"model" jsonschema:"the model that was asked for, empty when nano-gpt's own default was used"`
+	Model   string   `json:"model" jsonschema:"the model that was asked for, empty when NanoGPT's own default was used"`
 	Count   int      `json:"count" jsonschema:"number of images generated"`
 	URLs    []string `json:"urls" jsonschema:"where this server serves each image, which is also attached to this result"`
-	CostUSD float64  `json:"costUsd" jsonschema:"what nano-gpt billed the balance for the call"`
+	CostUSD float64  `json:"costUsd" jsonschema:"what NanoGPT billed the balance for the call"`
 }
 
 func registerGenerateImage(srv *mcp.Server, h *handlers) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "generate_image",
-		Description: "Generate one or more images through nano-gpt and wait for them, which takes seconds to a " +
+		Description: "Generate one or more images through NanoGPT and wait for them, which takes seconds to a " +
 			"few minutes. Every image is attached to the result, with the URL this server serves its copy from " +
 			"next to it. Passing image transforms that image instead of generating from scratch, and mask " +
-			"confines the change to the regions it marks. Bills the nano-gpt balance for each image; the charge " +
+			"confines the change to the regions it marks. Bills the NanoGPT balance for each image; the charge " +
 			"is reported in costUsd.",
 	}, h.generateImage)
 }
@@ -71,8 +71,8 @@ func (h *handlers) generateImage(ctx context.Context, _ *mcp.CallToolRequest, in
 	return imageContent(images), newGenerateImageOutput(in.Model, result, images), nil
 }
 
-// imageRequest carries the caller's addresses into the data URLs nano-gpt takes, so that the image
-// it transforms is one this deployment can read rather than only one nano-gpt could.
+// imageRequest carries the caller's addresses into the data URLs NanoGPT takes, so that the image
+// it transforms is one this deployment can read rather than only one NanoGPT could.
 func (h *handlers) imageRequest(ctx context.Context, in generateImageInput) (nanogpt.ImageRequest, error) {
 	image, err := h.resolveDataURL(ctx, in.Image)
 	if err != nil {
@@ -126,7 +126,7 @@ func (h *handlers) resolveDataURLs(ctx context.Context, addresses []string) ([]s
 	return dataURLs, nil
 }
 
-// resolveDataURL reads an address into the inline form nano-gpt takes; an address the caller left
+// resolveDataURL reads an address into the inline form NanoGPT takes; an address the caller left
 // out resolves to none.
 func (h *handlers) resolveDataURL(ctx context.Context, address string) (string, error) {
 	if address == "" {
@@ -162,7 +162,7 @@ func (h *handlers) storeImages(ctx context.Context, images []nanogpt.GeneratedIm
 	return stored, nil
 }
 
-// storeImage keeps a copy of one generated image. nano-gpt answers inline when asked to, and falls
+// storeImage keeps a copy of one generated image. NanoGPT answers inline when asked to, and falls
 // back to a signed URL when its own upload fails; either way what is kept here is the copy that
 // outlives the call.
 func (h *handlers) storeImage(ctx context.Context, image nanogpt.GeneratedImage) (storedImage, error) {

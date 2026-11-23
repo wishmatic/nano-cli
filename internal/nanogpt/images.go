@@ -15,12 +15,12 @@ const (
 	// until the image exists, which the documented models take well past FastTimeout for.
 	ImageGenerationBudget = 5 * time.Minute
 
-	// ResponseFormatBase64 asks for the bytes inline. It is nano-gpt's own default, and is named
+	// ResponseFormatBase64 asks for the bytes inline. It is NanoGPT's own default, and is named
 	// because the alternative is a signed URL that expires within the hour.
 	ResponseFormatBase64 = "b64_json"
 )
 
-// ImageRequest is the part of nano-gpt's OpenAI-compatible image request this server exposes; the
+// ImageRequest is the part of NanoGPT's OpenAI-compatible image request this server exposes; the
 // rest of the documented fields are knobs a single model each.
 //
 // Pointers keep an unset field distinguishable from an explicit zero, which several of these
@@ -34,7 +34,7 @@ type ImageRequest struct {
 	ResponseFormat string `json:"response_format,omitempty"`
 	User           string `json:"user,omitempty"`
 
-	// nano-gpt takes its inputs as data URLs rather than addresses it would have to fetch.
+	// NanoGPT takes its inputs as data URLs rather than addresses it would have to fetch.
 	ImageDataURL  string   `json:"imageDataUrl,omitempty"`
 	ImageDataURLs []string `json:"imageDataUrls,omitempty"`
 	MaskDataURL   string   `json:"maskDataUrl,omitempty"`
@@ -56,7 +56,7 @@ type imageData struct {
 	B64JSON string `json:"b64_json"`
 }
 
-// GeneratedImage is one image nano-gpt produced: the bytes when it answered inline, or the signed
+// GeneratedImage is one image NanoGPT produced: the bytes when it answered inline, or the signed
 // URL it falls back to when its own upload failed. It carries one or the other, never both.
 type GeneratedImage struct {
 	Data []byte

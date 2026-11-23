@@ -305,7 +305,7 @@ func generateImage(t *testing.T, nano string, resolver *resolve.Client, args map
 	return callTool(t, connectedSession(t, deps), "generate_image", args)
 }
 
-// inlineResponse is the shape nano-gpt answers with when it has the bytes to hand, which is what
+// inlineResponse is the shape NanoGPT answers with when it has the bytes to hand, which is what
 // asking for b64_json is for.
 func inlineResponse(image []byte, cost float64) string {
 	body, err := json.Marshal(map[string]any{

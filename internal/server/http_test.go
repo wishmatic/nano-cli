@@ -115,7 +115,7 @@ func TestMCPOverHTTPCallsWebSearch(t *testing.T) {
 		}
 
 		if key := r.Header.Get("x-api-key"); key != "nano-key" {
-			t.Errorf("x-api-key = %q, want the configured nano-gpt key", key)
+			t.Errorf("x-api-key = %q, want the configured NanoGPT key", key)
 		}
 
 		w.Header().Set("Content-Type", "application/json")

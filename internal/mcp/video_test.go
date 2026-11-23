@@ -278,7 +278,7 @@ func (r *submitRecorder) body(t *testing.T) map[string]any {
 	return r.submit
 }
 
-// recordingNano answers a submit and then a completed poll, like nano-gpt would, keeping the
+// recordingNano answers a submit and then a completed poll, like NanoGPT would, keeping the
 // submit body so a test can check what was sent.
 func recordingNano(t *testing.T, videoURL string) (string, *submitRecorder) {
 	t.Helper()

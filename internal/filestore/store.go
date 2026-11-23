@@ -1,4 +1,4 @@
-// Package filestore keeps the media nano-gpt generates on disk and serves it over HTTP. A
+// Package filestore keeps the media NanoGPT generates on disk and serves it over HTTP. A
 // generated video reaches the caller as a URL to one of these files rather than as tool content,
 // because MCP has no video content block; a generated image is stored the same way, and is
 // attached to the result as well.
@@ -98,7 +98,7 @@ func (c *Client) Put(ctx context.Context, data []byte, mediaType string) (Asset,
 	return Asset{URL: c.url(key), MediaType: mediaType, Bytes: int64(len(data))}, nil
 }
 
-// Fetch copies an upstream asset to disk. nano-gpt hands back a provider URL that expires, and
+// Fetch copies an upstream asset to disk. NanoGPT hands back a provider URL that expires, and
 // some providers require headers a plain reader will not send, so a caller gets a link of our
 // own instead. The bytes come back too, because a caller presenting the asset inline needs them
 // and re-reading the file would be absurd.

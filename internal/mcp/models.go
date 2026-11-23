@@ -22,10 +22,10 @@ type listModelsInput struct {
 
 type listModelsOutput struct {
 	Kind    string       `json:"kind" jsonschema:"the list that was read"`
-	Total   int          `json:"total" jsonschema:"models nano-gpt lists for this kind"`
+	Total   int          `json:"total" jsonschema:"models NanoGPT lists for this kind"`
 	Matched int          `json:"matched" jsonschema:"models that match query, before limit"`
 	Count   int          `json:"count" jsonschema:"models returned"`
-	Models  []modelEntry `json:"models" jsonschema:"the models, in the order nano-gpt lists them"`
+	Models  []modelEntry `json:"models" jsonschema:"the models, in the order NanoGPT lists them"`
 }
 
 type modelEntry struct {
@@ -36,13 +36,13 @@ type modelEntry struct {
 	Capabilities        map[string]any `json:"capabilities,omitempty" jsonschema:"feature flags, such as image_to_image or text_to_video"`
 	SupportedParameters map[string]any `json:"supportedParameters,omitempty" jsonschema:"model-specific settings, such as resolutions, max_images, or durations"`
 	Pricing             map[string]any `json:"pricing,omitempty" jsonschema:"USD pricing, whose shape varies by model"`
-	Tags                []string       `json:"tags,omitempty" jsonschema:"nano-gpt's own labels for the model"`
+	Tags                []string       `json:"tags,omitempty" jsonschema:"NanoGPT's own labels for the model"`
 }
 
 func registerListModels(srv *mcp.Server, h *handlers) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "list_models",
-		Description: "List the image or video models nano-gpt currently serves, with their capabilities, " +
+		Description: "List the image or video models NanoGPT currently serves, with their capabilities, " +
 			"supported settings, and pricing. Free to call, and the way to find an id for generate_image " +
 			"or generate_video rather than guessing one, since the names and the set of models change.",
 		InputSchema: mustEnumInputSchema[listModelsInput](map[string][]string{"kind": nanogpt.ModelKinds}),

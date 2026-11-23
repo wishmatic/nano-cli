@@ -15,7 +15,7 @@ import (
 type generateVideoInput struct {
 	Model          string `json:"model" jsonschema:"video model to generate with, such as veo2-video or kling_v2_1_std_5s; the names change, so a rejection means the running list is worth checking"`
 	Prompt         string `json:"prompt" jsonschema:"what the video should show"`
-	Image          string `json:"image,omitempty" jsonschema:"an image to animate, given as an http(s) URL, a data URI, raw base64, or a URL this server maps with IMAGE_URL_MAP; the bytes travel with the request, so nano-gpt needs to reach nothing. Naming one switches the call to image-to-video unless mode says otherwise"`
+	Image          string `json:"image,omitempty" jsonschema:"an image to animate, given as an http(s) URL, a data URI, raw base64, or a URL this server maps with IMAGE_URL_MAP; the bytes travel with the request, so NanoGPT needs to reach nothing. Naming one switches the call to image-to-video unless mode says otherwise"`
 	NegativePrompt string `json:"negativePrompt,omitempty" jsonschema:"content to suppress; respected by Veo, Wan, Runway, Pixverse, and other models"`
 	Duration       string `json:"duration,omitempty" jsonschema:"length in seconds as a string, such as 5 or 8; what a model accepts varies"`
 	AspectRatio    string `json:"aspectRatio,omitempty" jsonschema:"16:9, 9:16, 1:1, 4:3, or 3:4 where the model supports it"`
@@ -27,22 +27,22 @@ type generateVideoInput struct {
 }
 
 type generateVideoOutput struct {
-	RunID       string  `json:"runId" jsonschema:"nano-gpt's id for the job"`
+	RunID       string  `json:"runId" jsonschema:"NanoGPT's id for the job"`
 	Model       string  `json:"model" jsonschema:"the model that generated it"`
 	VideoURL    string  `json:"videoUrl" jsonschema:"where this server serves the video; open it to watch the result"`
 	ContentType string  `json:"contentType" jsonschema:"the media type the copy is served as"`
 	Bytes       int64   `json:"bytes" jsonschema:"size of the hosted copy"`
 	SourceURL   string  `json:"sourceUrl" jsonschema:"the provider URL the copy was taken from, which may expire"`
-	CostUSD     float64 `json:"costUsd" jsonschema:"what nano-gpt billed the balance once the job finished"`
+	CostUSD     float64 `json:"costUsd" jsonschema:"what NanoGPT billed the balance once the job finished"`
 }
 
 func registerGenerateVideo(srv *mcp.Server, h *handlers) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "generate_video",
-		Description: "Generate a video through nano-gpt and wait for it, which takes minutes rather than " +
+		Description: "Generate a video through NanoGPT and wait for it, which takes minutes rather than " +
 			"seconds. The call returns once the video is ready, as a resource link to a copy this server " +
 			"hosts: MCP clients have no video content block, so a link is the only way back. Bills the " +
-			"nano-gpt balance by duration and resolution.",
+			"NanoGPT balance by duration and resolution.",
 	}, h.generateVideo)
 }
 
@@ -88,7 +88,7 @@ func (h *handlers) generateVideo(ctx context.Context, _ *mcp.CallToolRequest, in
 	return videoLink(video, stored), newGenerateVideoOutput(video, stored), nil
 }
 
-// imageDataURL is nano-gpt's inline form for an image it cannot fetch itself.
+// imageDataURL is NanoGPT's inline form for an image it cannot fetch itself.
 func imageDataURL(image resolve.Image) string {
 	return "data:" + image.MediaType + ";base64," + base64.StdEncoding.EncodeToString(image.Data)
 }

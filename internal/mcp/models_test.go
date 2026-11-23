@@ -69,7 +69,7 @@ func TestListModelsReturnsTheModels(t *testing.T) {
 	}
 
 	if len(out.Models) != 3 {
-		t.Fatalf("models = %+v, want one per model nano-gpt listed", out.Models)
+		t.Fatalf("models = %+v, want one per model NanoGPT listed", out.Models)
 	}
 
 	first := out.Models[0]

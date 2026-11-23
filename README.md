@@ -1,9 +1,9 @@
 # nano-mcp
 
-An MCP server that exposes [nano-gpt](https://nano-gpt.com)'s data endpoints as tools, so a
-client can search the web, read pages, and generate images and videos on nano-gpt's billing.
+An MCP server that exposes [NanoGPT](https://nano-gpt.com)'s data endpoints as tools, so a
+client can search the web, read pages, and generate images and videos on NanoGPT's billing.
 
-- `web_search` (`POST /api/web`): searches the web through nano-gpt's providers and
+- `web_search` (`POST /api/web`): searches the web through NanoGPT's providers and
   reports the charge.
 - `web_scrape` (`POST /api/scrape-urls`): reads up to 5 pages, at 5x cost in stealth mode.
 - `firecrawl_scrape` (`POST /api/v1/firecrawl`): reads one page with Firecrawl's proxy and
@@ -13,7 +13,7 @@ client can search the web, read pages, and generate images and videos on nano-gp
 - `youtube_transcribe` (`POST /api/youtube-transcribe`): transcribes up to 10 YouTube videos, at
   about a cent each.
 - `list_models` (`GET /api/v1/image-models`, `GET /api/v1/video-models`): lists the image or video
-  models nano-gpt currently serves, with their capabilities, supported settings, and pricing. Free.
+  models NanoGPT currently serves, with their capabilities, supported settings, and pricing. Free.
 - `generate_image` (`POST /api/v1/images/generations`, OpenAI-compatible): generates one or more
   images and attaches each to the result, with the URL this server serves its copy from. Passing
   `image` transforms that image instead of generating from scratch, and `mask` confines the change
@@ -56,8 +56,8 @@ readable by anyone who has its URL. See [.env.example](.env.example) for the res
 
 `generate_image` and `generate_video` take an image as an address: an http(s) URL, a data URI, raw
 base64, or a URL this deployment maps to a local file. The resolver reads it and sends the bytes to
-nano-gpt, so the address itself only has to be reachable by this server. `IMAGE_URL_MAP` is how an
-image on disk, or on a sibling `elfu-mcp` or `neo-mcp` whose host nano-gpt cannot reach, becomes
+NanoGPT, so the address itself only has to be reachable by this server. `IMAGE_URL_MAP` is how an
+image on disk, or on a sibling `elfu-mcp` or `neo-mcp` whose host NanoGPT cannot reach, becomes
 readable: comma-separated `public=private` pairs, where the private side is a directory or a
 private base URL.
 

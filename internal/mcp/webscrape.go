@@ -9,13 +9,13 @@ import (
 
 type webScrapeInput struct {
 	URLs        []string `json:"urls" jsonschema:"1 to 5 public http(s) URLs to fetch"`
-	Provider    string   `json:"provider,omitempty" jsonschema:"auto routes between nano-gpt's crawler and Linkup, linkup fetches without a fallback"`
+	Provider    string   `json:"provider,omitempty" jsonschema:"auto routes between NanoGPT's crawler and Linkup, linkup fetches without a fallback"`
 	StealthMode bool     `json:"stealthMode,omitempty" jsonschema:"route through a stealth proxy for anti-bot defences, at 5x the per-URL charge"`
 }
 
 type webScrapeOutput struct {
 	Results []scrapeResult `json:"results" jsonschema:"one entry per requested URL, in the order they were asked for"`
-	Summary any            `json:"summary" jsonschema:"nano-gpt's request stats, including stealthModeUsed"`
+	Summary any            `json:"summary" jsonschema:"NanoGPT's request stats, including stealthModeUsed"`
 }
 
 type scrapeResult struct {
@@ -30,7 +30,7 @@ type scrapeResult struct {
 func registerWebScrape(srv *mcp.Server, h *handlers) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "web_scrape",
-		Description: "Fetch the readable text of up to 5 public web pages through nano-gpt. Returns formatted " +
+		Description: "Fetch the readable text of up to 5 public web pages through NanoGPT. Returns formatted " +
 			"text, never raw HTML. Costs about 0.0015 per URL, or 0.0075 with stealthMode.",
 	}, h.webScrape)
 }

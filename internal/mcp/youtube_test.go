@@ -89,7 +89,7 @@ func TestYouTubeTranscribeKeepsPerURLFailuresAsResults(t *testing.T) {
 	}
 
 	if out.Transcripts[0].Success || !strings.Contains(out.Transcripts[0].Error, "not found") {
-		t.Errorf("transcripts[0] = %+v, want nano-gpt's reason for the failure", out.Transcripts[0])
+		t.Errorf("transcripts[0] = %+v, want NanoGPT's reason for the failure", out.Transcripts[0])
 	}
 
 	if out.Summary.TotalCost != 0 {

@@ -15,7 +15,7 @@ const (
 	MediaJPEG = "image/jpeg"
 	MediaWebP = "image/webp"
 
-	// MaxImageBytes caps what travels to nano-gpt, where the image is base64-encoded into the
+	// MaxImageBytes caps what travels to NanoGPT, where the image is base64-encoded into the
 	// request body and so costs a third more on the wire than it does on disk.
 	MaxImageBytes = 16 << 20
 )
