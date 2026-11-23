@@ -85,6 +85,7 @@ func newClientAt(t *testing.T, baseURL string) *nanogpt.Client {
 type capturedRequest struct {
 	Method string
 	Path   string
+	Query  string
 	Header http.Header
 	Body   []byte
 }
@@ -94,7 +95,17 @@ func captureServer(
 ) (*httptest.Server, <-chan capturedRequest) {
 	t.Helper()
 
-	requests := make(chan capturedRequest, 1)
+	return captureServerFunc(t, func(*http.Request) (int, string) {
+		return status, response
+	})
+}
+
+func captureServerFunc(
+	t *testing.T, respond func(*http.Request) (int, string),
+) (*httptest.Server, <-chan capturedRequest) {
+	t.Helper()
+
+	requests := make(chan capturedRequest, 16)
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		body, err := io.ReadAll(r.Body)
@@ -108,9 +119,12 @@ func captureServer(
 		requests <- capturedRequest{
 			Method: r.Method,
 			Path:   r.URL.Path,
+			Query:  r.URL.RawQuery,
 			Header: r.Header.Clone(),
 			Body:   body,
 		}
+
+		status, response := respond(r)
 
 		w.WriteHeader(status)
 		_, _ = w.Write([]byte(response))

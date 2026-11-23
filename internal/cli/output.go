@@ -21,5 +21,9 @@ func WriteJSON(w io.Writer, value any) error {
 }
 
 func FormatUSD(amount float64) string {
-	return "$" + strconv.FormatFloat(amount, 'f', -1, 64)
+	return "$" + FormatAmount(amount)
+}
+
+func FormatAmount(amount float64) string {
+	return strconv.FormatFloat(amount, 'f', -1, 64)
 }
