@@ -14,6 +14,11 @@ import (
 	"github.com/wishmatic/nano-mcp/internal/nanogpt"
 )
 
+var (
+	testPNG   = []byte("\x89PNG\r\n\x1a\n test image")
+	testVideo = []byte("test video bytes")
+)
+
 type memoryStore struct {
 	key       string
 	loadErr   error
@@ -156,4 +161,19 @@ func (r capturedRequest) jsonBody(t *testing.T) map[string]any {
 	}
 
 	return body
+}
+
+func nextRequestPath(t *testing.T, requests <-chan capturedRequest, path string) capturedRequest {
+	t.Helper()
+
+	for range 16 {
+		request := nextRequest(t, requests)
+		if request.Path == path {
+			return request
+		}
+	}
+
+	t.Fatalf("upstream received no request for %s", path)
+
+	return capturedRequest{}
 }
