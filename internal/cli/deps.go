@@ -65,7 +65,7 @@ func NanoClient(deps Deps) (*nanogpt.Client, error) {
 
 		key, err = store.Load()
 		if errors.Is(err, credential.ErrNotFound) {
-			return nil, fmt.Errorf("not logged in: run `nano login` or set NANOGPT_API_KEY")
+			return nil, fmt.Errorf("not logged in: run `nano-cli login` or set NANOGPT_API_KEY")
 		}
 		if err != nil {
 			return nil, fmt.Errorf("load API key: %w", err)

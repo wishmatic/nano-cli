@@ -26,7 +26,7 @@ func TestHelpForASubcommand(t *testing.T) {
 		t.Fatalf("Execute() error: %v", err)
 	}
 
-	if !strings.Contains(out, "nano login") {
+	if !strings.Contains(out, "nano-cli login") {
 		t.Errorf("help output = %q, want the login usage", out)
 	}
 }

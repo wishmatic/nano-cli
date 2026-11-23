@@ -106,7 +106,7 @@ func TestNanoClientReportsAMissingKey(t *testing.T) {
 	t.Setenv("NANOGPT_API_KEY", "")
 
 	_, err := NanoClient(Deps{Credentials: &memoryStore{}})
-	if err == nil || !strings.Contains(err.Error(), "nano login") {
+	if err == nil || !strings.Contains(err.Error(), "nano-cli login") {
 		t.Errorf("NanoClient() error = %v, want a login hint", err)
 	}
 }

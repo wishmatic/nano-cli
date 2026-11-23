@@ -19,7 +19,7 @@ func newRoot(deps cli.Deps) *cobra.Command {
 	deps = cli.WithDefaults(deps)
 
 	root := &cobra.Command{
-		Use:           "nano",
+		Use:           "nano-cli",
 		Short:         "Use NanoGPT from the command line",
 		Long:          "Search, scrape, view, generate, and more through the NanoGPT service!",
 		SilenceUsage:  true,
