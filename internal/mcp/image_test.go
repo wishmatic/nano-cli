@@ -25,7 +25,7 @@ func TestGenerateImageToolIsListed(t *testing.T) {
 
 	want := []string{
 		"prompt", "model", "n", "size", "image", "images", "mask", "seed", "strength", "guidanceScale",
-		"numInferenceSteps", "isInline",
+		"numInferenceSteps", "inline",
 	}
 
 	for _, name := range want {
@@ -46,9 +46,9 @@ func TestGenerateImageStoresAndAttachesWhatItGenerates(t *testing.T) {
 	deps.Resolver = addressMap(t, "")
 
 	result := callTool(t, connectedSession(t, deps), "generate_image", map[string]any{
-		"prompt":   "a lake at sunset",
-		"model":    "nano-banana",
-		"isInline": true,
+		"prompt": "a lake at sunset",
+		"model":  "nano-banana",
+		"inline": true,
 	})
 
 	if result.IsError {
@@ -157,8 +157,8 @@ func TestGenerateImageCopiesTheURLItFallsBackTo(t *testing.T) {
 	deps.Resolver = addressMap(t, "")
 
 	result := callTool(t, connectedSession(t, deps), "generate_image", map[string]any{
-		"prompt":   "a lake",
-		"isInline": true,
+		"prompt": "a lake",
+		"inline": true,
 	})
 
 	if result.IsError {

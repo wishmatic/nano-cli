@@ -31,13 +31,13 @@ type generateImageInput struct {
 	GuidanceScale     *float64 `json:"guidanceScale,omitempty" jsonschema:"how closely the model follows the prompt, from 0 to 20"`
 	NumInferenceSteps *int     `json:"numInferenceSteps,omitempty" jsonschema:"denoising steps, from 1 to 100, where more is slower and usually better"`
 
-	IsInline bool `json:"isInline,omitempty" jsonschema:"attach the image bytes to the result as well as its URL, so a vision-capable model can see it; unset returns only the URL"`
+	IsInline bool `json:"inline,omitempty" jsonschema:"attach the image bytes to the result as well as its URL, so a vision-capable model can see it; unset returns only the URL"`
 }
 
 type generateImageOutput struct {
 	Model   string   `json:"model" jsonschema:"the model that was asked for, empty when NanoGPT's own default was used"`
 	Count   int      `json:"count" jsonschema:"number of images generated"`
-	URLs    []string `json:"urls" jsonschema:"where this server serves each image; with isInline each one is also attached to this result"`
+	URLs    []string `json:"urls" jsonschema:"where this server serves each image; with inline each one is also attached to this result"`
 	CostUSD float64  `json:"costUsd" jsonschema:"what NanoGPT billed the balance for the call"`
 }
 
@@ -45,7 +45,7 @@ func registerGenerateImage(srv *mcp.Server, h *handlers) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "generate_image",
 		Description: "Generate one or more images through NanoGPT and wait for them, which takes seconds to a " +
-			"few minutes. The result carries the URL this server serves each copy from as text; passing isInline " +
+			"few minutes. The result carries the URL this server serves each copy from as text; passing inline " +
 			"attaches the image itself next to it, for a client that can show it. Passing image transforms that " +
 			"image instead of generating from scratch, and mask confines the change to the regions it marks. " +
 			"Bills the NanoGPT balance for each image; the charge is reported in costUsd.",
