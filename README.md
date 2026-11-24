@@ -94,3 +94,5 @@ go run ./cmd/nano-cli serve
 
 Licensed under the Apache License, Version 2.0, derived from
 [go-mcp](https://github.com/wishmatic/go-mcp). See [LICENSE](LICENSE).
+
+This project is not affiliated with nor endorsed by NanoGPT or any other third party.
