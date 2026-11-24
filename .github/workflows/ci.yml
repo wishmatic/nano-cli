@@ -43,7 +43,7 @@ jobs:
                   username: ${{ github.actor }}
                   password: ${{ secrets.GITHUB_TOKEN }}
             - name: build and push image
+              # Note: this isn't the name of the repo; "nano-mcp" instead of "nano-cli".
               run: |
-                  docker build --tag "ghcr.io/${{ github.repository }}:latest" .
-                  # Note: this isn't the name of the repo; "nano-mcp" instead of "nano-cli".
+                  docker build --tag "ghcr.io/wishmatic/nano-mcp:latest" .
                   docker push "ghcr.io/wishmatic/nano-mcp:latest"
