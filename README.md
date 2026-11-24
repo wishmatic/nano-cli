@@ -37,7 +37,7 @@ The API key is used by callers over HTTP; it should not be the same as the NanoG
 The CLI also exposes the MCP server. Note that this relies on environment variables. We recommend
 you use the Docker image for this.
 
-````sh
+```sh
 nano-cli serve
 ```
 
@@ -55,7 +55,7 @@ nano-cli models list image --query nano
 nano-cli models balance
 nano-cli gen image "a red fox in snow" --out ./images
 nano-cli gen video "waves at sunset" --model veo2-video --out ./videos
-````
+```
 
 ### Served Files
 
