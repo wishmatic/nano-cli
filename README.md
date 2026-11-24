@@ -1,49 +1,50 @@
-# nano-mcp
+# `nano-cli` and MCP
 
-An MCP server and CLI for [NanoGPT](https://nano-gpt.com)'s data endpoints, so a client or a
-terminal can search the web, read pages, and generate images and videos on NanoGPT's billing.
+A CLI tool for [NanoGPT](https://nano-gpt.com)'s data endpoints.
 
-- `web_search` (`POST /api/web`): searches the web through NanoGPT's providers and
-  reports the charge.
-- `web_scrape` (`POST /api/scrape-urls`): reads up to 5 pages, at 5x cost in stealth mode.
-- `firecrawl_scrape` (`POST /api/v1/firecrawl`): reads one page with Firecrawl's proxy and
-  content filters.
-- `firecrawl_map` (`POST /api/v1/firecrawl`): lists the URLs Firecrawl can discover on a site.
-- `firecrawl_crawl` (`POST /api/v1/firecrawl`): crawls from a starting URL and returns the pages.
-- `youtube_transcribe` (`POST /api/youtube-transcribe`): transcribes up to 10 YouTube videos, at
-  about a cent each.
-- `list_models` (`GET /api/v1/image-models`, `GET /api/v1/video-models`): lists the image or video
-  models NanoGPT currently serves, with their capabilities, supported settings, and pricing. Free.
-- `generate_image` (`POST /api/v1/images/generations`, OpenAI-compatible): generates one or more
-  images and attaches each to the result, with the URL this server serves its copy from. Passing
-  `image` transforms that image instead of generating from scratch, and `mask` confines the change
-  to the regions it marks; the address is read here and the bytes travel with the request.
-- `generate_video` (`POST /api/generate-video`): generates a video and waits it out, then serves
-  a copy from this server as a resource link. MCP has no video content block, so the tool returns
-  a link rather than media, and the server needs `PUBLIC_HOST` to build it. Passing `image`
-  animates that image; the address is read here and the bytes travel with the request.
-- `check_balance` (`POST /api/check-balance`): reads the credit the account has left. Free.
+With just this (and an API key), you or your agent can search the web, read pages, and generate
+images and videos on NanoGPT's billing.
 
-The three firecrawl tools share one endpoint and differ by the `operation` they send.
-`firecrawl_scrape` is worth having next to `web_scrape` because it is billed in Firecrawl credits
-rather than per URL, and because it exposes a proxy tier and content filters `web_scrape` lacks.
-`youtube_transcribe` bills only the videos that yield a transcript, so one without captions costs
-nothing and comes back as a failed entry. `list_models` is how to find an id for the generate tools,
-which is worth doing because the names, availability, and settings all change, and `check_balance`
-is worth a call before a generation that bills by the second.
+## Getting Started
 
-## CLI
+### CLI
 
 ```sh
 go install github.com/wishmatic/nano-mcp/cmd/nano-cli@latest
 ```
 
-`nano-cli login` reads the API key from stdin, hiding it when the terminal is interactive, and
-stores it in the OS keyring. When no keyring is available it falls back to a `0600` file under the
-user config directory. `NANOGPT_API_KEY` takes precedence over the stored key, and
-`NANO_CREDENTIAL_BACKEND=keyring|file|auto` forces a backend. `nano-cli logout` removes it.
+As with all Go tools, make sure your Go `bin/` directory is on your `PATH`. Next:
 
 ```sh
+nano-cli login
+```
+
+### MCP (via Docker)
+
+```sh
+docker run -d -p 8080:8080 \
+  -e API_KEY=change-me \
+  -e NANOGPT_API_KEY=change-me \
+  -e PUBLIC_HOST=https://nano-mcp.example.com \
+  -v nano-mcp-files:/data \
+  ghcr.io/wishmatic/nano-mcp:latest
+```
+
+The API key is used by callers over HTTP; it should not be the same as the NanoGPT API key.
+
+## Usage
+
+The CLI also exposes the MCP server. Note that this relies on environment variables. We recommend
+you use the Docker image for this.
+
+````sh
+nano-cli serve
+```
+
+Examples of other commands:
+
+```sh
+nano-cli help
 nano-cli web search "go generics" --provider exa
 nano-cli web scrape https://example.com
 nano-cli web scrape --firecrawl https://example.com --format markdown
@@ -54,50 +55,40 @@ nano-cli models list image --query nano
 nano-cli models balance
 nano-cli gen image "a red fox in snow" --out ./images
 nano-cli gen video "waves at sunset" --model veo2-video --out ./videos
-```
+````
 
-The CLI saves generated media to local files. `nano-cli serve` runs the MCP server, and
-`nano-cli help` or `nano-cli help <command>` lists every flag. The keyring is preferred for
-interactive use; `NANOGPT_API_KEY` is convenient for containers and CI, but environment variables
-can be exposed to other processes more easily than the keyring.
+### Served Files
 
-## Local Development
+Generated images and videos are served from `/v/`, under `FILES_DIR` on disk.
 
-```sh
-API_KEY=change-me NANOGPT_API_KEY=change-me \
-  PUBLIC_HOST=http://localhost:8080 go run ./cmd/nano-cli serve
-```
+### Input Addresses
 
-The MCP endpoint is `/mcp`, and `/healthz` answers `ok` without a token. Generated images and
-videos are served from `/v/`, under `FILES_DIR` on disk.
+Some MCP tools and the CLI `gen` commands take an image as an address: an http(s) URL, a data URI,
+raw base64, or a URL this deployment maps to a local file. Problem is, that local file or even
+a HTTP URL might not be accessible from where it is running.
+
+`IMAGE_URL_MAP` allows mapping addresses as they're received by the MCP tool or in `gen` CLI calls:
+comma-separated `foo=bar` pairs. For example, using [Elfu](https://github.com/wishmatic/elfu-mcp):
 
 ```sh
-docker run -d -p 8080:8080 -v nano-mcp-files:/data \
-  -e API_KEY=change-me -e NANOGPT_API_KEY=change-me \
-  -e PUBLIC_HOST=https://nano-mcp.example.com \
-  ghcr.io/wishmatic/nano-mcp:latest
-```
-
-`API_KEY` authenticates every `/mcp` request, `NANOGPT_API_KEY` funds every tool call, and
-`PUBLIC_HOST` is where generated media is served from; all three are required. Anything stored is
-readable by anyone who has its URL. See [.env.example](.env.example) for the rest.
-
-### Input addresses
-
-The MCP `generate_image` and `generate_video` tools and the CLI `gen` commands take an image as an
-address: an http(s) URL, a data URI, raw base64, or a URL this deployment maps to a local file.
-The resolver reads it and sends the bytes to NanoGPT, so the address itself only has to be
-reachable by this machine. `IMAGE_URL_MAP` is how an image on disk, or on a sibling `elfu-mcp` or
-`neo-mcp` whose host NanoGPT cannot reach, becomes readable: comma-separated `public=private`
-pairs, where the private side is a directory or a private base URL.
-
-```sh
-# elfu-mcp's images, read from its files directory rather than over the network
 IMAGE_URL_MAP=https://elfu.example.com=/data/elfu/files
 ```
 
-A mapped directory is readable in full by anyone who can call the tool, so make the public side
-unguessable.
+A mapped directory is readable in full by anyone who can call the tool.
+
+### Other Notes
+
+- The CLI saves generated media to local files.
+- You may use `NANOGPT_API_KEY` to store the API key instead of `nano-cli login` but please note
+  that environment variables are much easier to exfiltrate even accidentally by your agent.
+
+## Local Development
+
+Modify `.env`; you can copy from `.env.example`. Then:
+
+```sh
+go run ./cmd/nano-cli serve
+```
 
 ## License
 

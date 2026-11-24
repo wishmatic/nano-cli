@@ -45,4 +45,5 @@ jobs:
             - name: build and push image
               run: |
                   docker build --tag "ghcr.io/${{ github.repository }}:latest" .
-                  docker push "ghcr.io/${{ github.repository }}:latest"
+                  # Note: this isn't the name of the repo; "nano-mcp" instead of "nano-cli".
+                  docker push "ghcr.io/wishmatic/nano-mcp:latest"
