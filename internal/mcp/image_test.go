@@ -25,7 +25,7 @@ func TestGenerateImageToolIsListed(t *testing.T) {
 
 	want := []string{
 		"prompt", "model", "n", "size", "image", "images", "mask", "seed", "strength", "guidanceScale",
-		"numInferenceSteps",
+		"numInferenceSteps", "isInline",
 	}
 
 	for _, name := range want {
@@ -46,8 +46,9 @@ func TestGenerateImageStoresAndAttachesWhatItGenerates(t *testing.T) {
 	deps.Resolver = addressMap(t, "")
 
 	result := callTool(t, connectedSession(t, deps), "generate_image", map[string]any{
-		"prompt": "a lake at sunset",
-		"model":  "nano-banana",
+		"prompt":   "a lake at sunset",
+		"model":    "nano-banana",
+		"isInline": true,
 	})
 
 	if result.IsError {
@@ -117,15 +118,48 @@ func TestGenerateImageStoresAndAttachesWhatItGenerates(t *testing.T) {
 	}
 }
 
-func TestGenerateImageCopiesTheURLItFallsBackTo(t *testing.T) {
-	source := servePNG(t)
+func TestGenerateImageReturnsOnlyTheURLUnlessAskedToInline(t *testing.T) {
+	nano, _ := recordingImageNano(t, inlineResponse(testPNGBytes, testImageCost))
 
 	deps := noopDeps()
-	deps.NanoGPT = nanoClient(t, upstreamJSON(t, `{"data":[{"url":"`+source+`/out.png"}]}`))
+	deps.NanoGPT = nanoClient(t, nano)
 	deps.Files = fileStore(t)
 	deps.Resolver = addressMap(t, "")
 
 	result := callTool(t, connectedSession(t, deps), "generate_image", map[string]any{"prompt": "a lake"})
+
+	if result.IsError {
+		t.Fatalf("generate_image failed: %s", errorText(result))
+	}
+
+	if len(result.Content) != 1 {
+		t.Fatalf("content = %#v, want only the URL", result.Content)
+	}
+
+	text, ok := result.Content[0].(*mcp.TextContent)
+	if !ok {
+		t.Fatalf("content[0] = %T, want the URL as text", result.Content[0])
+	}
+
+	if text.Text == "" {
+		t.Error("the URL is empty")
+	}
+}
+
+func TestGenerateImageCopiesTheURLItFallsBackTo(t *testing.T) {
+	source := servePNG(t)
+
+	store, dir := videoStore(t)
+
+	deps := noopDeps()
+	deps.NanoGPT = nanoClient(t, upstreamJSON(t, `{"data":[{"url":"`+source+`/out.png"}]}`))
+	deps.Files = store
+	deps.Resolver = addressMap(t, "")
+
+	result := callTool(t, connectedSession(t, deps), "generate_image", map[string]any{
+		"prompt":   "a lake",
+		"isInline": true,
+	})
 
 	if result.IsError {
 		t.Fatalf("generate_image failed: %s", errorText(result))
@@ -142,6 +176,25 @@ func TestGenerateImageCopiesTheURLItFallsBackTo(t *testing.T) {
 
 	if image.MIMEType != "image/png" || !bytes.Equal(image.Data, testPNGBytes) {
 		t.Errorf("image = %q of %d bytes, want the bytes the fallback URL served", image.MIMEType, len(image.Data))
+	}
+
+	text, ok := result.Content[0].(*mcp.TextContent)
+	if !ok {
+		t.Fatalf("content[0] = %T, want the URL as text", result.Content[0])
+	}
+
+	parsed, err := url.Parse(text.Text)
+	if err != nil {
+		t.Fatalf("url.Parse() error: %v", err)
+	}
+
+	stored, err := os.ReadFile(filepath.Join(dir, filepath.FromSlash(strings.TrimPrefix(parsed.Path, "/"))))
+	if err != nil {
+		t.Fatalf("read the hosted copy: %v", err)
+	}
+
+	if !bytes.Equal(stored, testPNGBytes) {
+		t.Errorf("hosted copy = %q, want the bytes the fallback URL served", stored)
 	}
 }
 

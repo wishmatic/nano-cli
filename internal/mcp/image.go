@@ -30,12 +30,14 @@ type generateImageInput struct {
 	Strength          *float64 `json:"strength,omitempty" jsonschema:"how far the output may move from the input image, from 0 to 1, where lower stays closer to it"`
 	GuidanceScale     *float64 `json:"guidanceScale,omitempty" jsonschema:"how closely the model follows the prompt, from 0 to 20"`
 	NumInferenceSteps *int     `json:"numInferenceSteps,omitempty" jsonschema:"denoising steps, from 1 to 100, where more is slower and usually better"`
+
+	IsInline bool `json:"isInline,omitempty" jsonschema:"attach the image bytes to the result as well as its URL, so a vision-capable model can see it; unset returns only the URL"`
 }
 
 type generateImageOutput struct {
 	Model   string   `json:"model" jsonschema:"the model that was asked for, empty when NanoGPT's own default was used"`
 	Count   int      `json:"count" jsonschema:"number of images generated"`
-	URLs    []string `json:"urls" jsonschema:"where this server serves each image, which is also attached to this result"`
+	URLs    []string `json:"urls" jsonschema:"where this server serves each image; with isInline each one is also attached to this result"`
 	CostUSD float64  `json:"costUsd" jsonschema:"what NanoGPT billed the balance for the call"`
 }
 
@@ -43,10 +45,10 @@ func registerGenerateImage(srv *mcp.Server, h *handlers) {
 	mcp.AddTool(srv, &mcp.Tool{
 		Name: "generate_image",
 		Description: "Generate one or more images through NanoGPT and wait for them, which takes seconds to a " +
-			"few minutes. Every image is attached to the result, with the URL this server serves its copy from " +
-			"next to it. Passing image transforms that image instead of generating from scratch, and mask " +
-			"confines the change to the regions it marks. Bills the NanoGPT balance for each image; the charge " +
-			"is reported in costUsd.",
+			"few minutes. The result carries the URL this server serves each copy from as text; passing isInline " +
+			"attaches the image itself next to it, for a client that can show it. Passing image transforms that " +
+			"image instead of generating from scratch, and mask confines the change to the regions it marks. " +
+			"Bills the NanoGPT balance for each image; the charge is reported in costUsd.",
 	}, h.generateImage)
 }
 
@@ -68,7 +70,7 @@ func (h *handlers) generateImage(ctx context.Context, _ *mcp.CallToolRequest, in
 		return nil, generateImageOutput{}, h.fail("generate_image", err)
 	}
 
-	return imageContent(images), newGenerateImageOutput(in.Model, result, images), nil
+	return imageContent(images, in.IsInline), newGenerateImageOutput(in.Model, result, images), nil
 }
 
 // imageRequest carries the caller's addresses into the data URLs NanoGPT takes, so that the image
@@ -189,13 +191,17 @@ func (h *handlers) storeImage(ctx context.Context, image nanogpt.GeneratedImage)
 }
 
 // imageContent is the whole presentation of a generated image: the URL this server serves the copy
-// from as text, immediately followed by the image itself. MCP has an image content block, so unlike
-// a generated video the media travels with the call.
-func imageContent(images []storedImage) *mcp.CallToolResult {
-	content := make([]mcp.Content, 0, 2*len(images))
+// from as text and, only when the caller asked for it, the image itself. Inlining costs the client a
+// base64 copy of every generated image, which is rarely worth it when the URL opens the same thing.
+func imageContent(images []storedImage, inline bool) *mcp.CallToolResult {
+	content := make([]mcp.Content, 0, len(images))
 
 	for _, image := range images {
-		content = append(content, &mcp.TextContent{Text: image.asset.URL}, imageBlock(image))
+		content = append(content, &mcp.TextContent{Text: image.asset.URL})
+
+		if inline {
+			content = append(content, imageBlock(image))
+		}
 	}
 
 	return &mcp.CallToolResult{Content: content}

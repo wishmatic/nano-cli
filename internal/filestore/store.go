@@ -1,7 +1,7 @@
 // Package filestore keeps the media NanoGPT generates on disk and serves it over HTTP. A
 // generated video reaches the caller as a URL to one of these files rather than as tool content,
-// because MCP has no video content block; a generated image is stored the same way, and is
-// attached to the result as well.
+// because MCP has no video content block; a generated image is stored the same way, and is only
+// attached to the result as well when the caller asks for it inline.
 package filestore
 
 import (
